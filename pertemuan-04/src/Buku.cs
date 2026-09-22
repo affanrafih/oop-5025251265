@@ -11,10 +11,15 @@ public class Buku
     //   bisa mengubahnya sembarangan). Jadikan field PRIVATE (awali nama dengan
     //   _) lalu ekspos lewat properti read-only: public get, tanpa setter
     //   publik. Nama properti tetap Isbn, Judul, StokTotal, StokTersedia.
-    public string Isbn = "";
-    public string Judul = "";
-    public int StokTotal;
-    public int StokTersedia;
+    private string _Isbn = "";
+    private string _Judul = "";
+    private int _StokTotal;
+    private int _StokTersedia;
+
+    public string Isbn { get { return _Isbn; } }
+    public string Judul { get { return _Judul; } }
+    public int StokTotal { get { return _StokTotal; } }
+    public int StokTersedia { get { return _StokTersedia; } }
 
     // TODO(Level 8): properti di bawah ini menerima nilai apa saja. Beri nilai
     //   awal 7 dan tambahkan logika validasi di accessor set (perlu field
@@ -26,21 +31,40 @@ public class Buku
     //   saja atau stokTotal negatif -> lempar ArgumentException
     //   (ArgumentOutOfRangeException juga boleh); jangan ada state yang berubah
     //   kalau ditolak.
+
+    
     // TODO(Level 6): validasi & normalisasi ISBN -- buang tanda '-' dan spasi;
     //   hasilnya harus tepat 13 digit angka dengan digit cek ISBN-13 yang benar;
     //   kalau tidak, lempar ArgumentException. Isbn menyimpan versi TANPA '-'.
     public Buku(string isbn, string judul, int stokTotal)
     {
+        if(string.IsNullOrWhiteSpace(judul))
+        {
+            throw new ArgumentException("Judul tidak boleh kosong atau hanya spasi");
+        }
+        if(stokTotal < 0)
+        {
+            throw new ArgumentException("Stok total tidak boleh negatif");
+        }
         // TODO(Level 1): isi Isbn, Judul, StokTotal dari parameter; StokTersedia
         //   awal = stokTotal.
-        throw new NotImplementedException("Level 1 belum diimplementasikan");
+        _Isbn = isbn;
+        _Judul = judul;
+        _StokTotal = stokTotal;
+        _StokTersedia = stokTotal;
+
+        // throw new NotImplementedException("Level 1 belum diimplementasikan");
     }
 
     public void Pinjam()
     {
         // TODO(Level 3): kurangi StokTersedia satu. Kalau stok sudah 0, lempar
         //   InvalidOperationException dan biarkan stok tetap.
-        throw new NotImplementedException("Level 3 belum diimplementasikan");
+        if (_StokTersedia == 0)
+            throw new InvalidOperationException("Stok habis!");
+
+        _StokTersedia--;
+        //throw new NotImplementedException("Level 3 belum diimplementasikan");
     }
 
     public void Kembalikan()
@@ -48,7 +72,10 @@ public class Buku
         // TODO(Level 4): tambah StokTersedia satu. Kalau stok sudah sama dengan
         //   StokTotal (tidak ada yang sedang dipinjam), lempar
         //   InvalidOperationException dan biarkan stok tetap.
-        throw new NotImplementedException("Level 4 belum diimplementasikan");
+        if (_StokTersedia == _StokTotal)
+            throw new InvalidOperationException("Buku sudah dikembalikan!");
+        _StokTersedia++;
+        //throw new NotImplementedException("Level 4 belum diimplementasikan");
     }
 
     // Level 5: properti TERHITUNG -- tanpa field pendukung, tanpa setter.
@@ -58,7 +85,12 @@ public class Buku
         {
             // TODO(Level 5): kembalikan StokTersedia / StokTotal * 100 (double).
             //   Kalau StokTotal = 0 kembalikan 0 (bukan NaN).
-            throw new NotImplementedException("Level 5 belum diimplementasikan");
+            if (_StokTotal == 0)
+                return 0;
+            
+            PersentaseTersedia = StokTersedia / StokTotal * 100;
+
+            //throw new NotImplementedException("Level 5 belum diimplementasikan");
         }
     }
 
@@ -68,7 +100,12 @@ public class Buku
         {
             // TODO(Level 5): kembalikan "Tersedia" kalau StokTersedia > 0,
             //   selain itu "Habis".
-            throw new NotImplementedException("Level 5 belum diimplementasikan");
+            if (_StokTersedia > 0)
+                return "Tersedia";
+            else
+                return "Habis";
+
+            //throw new NotImplementedException("Level 5 belum diimplementasikan");
         }
     }
 
