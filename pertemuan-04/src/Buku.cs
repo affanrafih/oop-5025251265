@@ -25,8 +25,17 @@ public class Buku
     //   awal 7 dan tambahkan logika validasi di accessor set (perlu field
     //   pendukung): nilai harus 1..30, di luar itu lempar
     //   ArgumentOutOfRangeException dan JANGAN mengubah nilai lama.
-    public int BatasHariPinjam { get; set; }
-
+    private int _batasPinjam = 7; 
+    public int BatasHariPinjam { 
+        get{return _batasPinjam ;} 
+        set{ 
+            if(value < 1 || value > 30){
+                throw new ArgumentOutOfRangeException(nameof(value), value, "Batas hari pinjam harus 1..30");
+            
+            }
+            _batasPinjam = value;   
+        }   
+    }
     // TODO(Level 2): validasi di AWAL konstruktor -- judul null/kosong/spasi
     //   saja atau stokTotal negatif -> lempar ArgumentException
     //   (ArgumentOutOfRangeException juga boleh); jangan ada state yang berubah
@@ -42,13 +51,28 @@ public class Buku
         {
             throw new ArgumentException("Judul tidak boleh kosong atau hanya spasi");
         }
-        if(stokTotal < 0)
-        {
-            throw new ArgumentException("Stok total tidak boleh negatif");
+        if(stokTotal < 0) throw new ArgumentException("Stok total tidak boleh negatif");
+
+        if(isbn == null) throw new ArgumentException("ISBN tidak boleh null");
+        
+        string clear = isbn.Replace("-", "").Replace(" ", "");
+        if(clear.Length != 13)
+            throw new ArgumentException("ISBN harus 13 digit");
+
+        int total = 0;
+        for (int i=0; i < 13; i++){
+            char C = clear[i];
+            if (C< '0' || C> '9') throw new ArgumentException("ISBN hanya berisi angka");
+
+            int digit = C - '0';
+            total += (i % 2 == 0) ? digit : digit*3;
         }
+
+        if(total % 10 != 0) throw new ArgumentException("Digit cek ISBN-13 tidak valid");
+
         // TODO(Level 1): isi Isbn, Judul, StokTotal dari parameter; StokTersedia
         //   awal = stokTotal.
-        _Isbn = isbn;
+        _Isbn = clear;
         _Judul = judul;
         _StokTotal = stokTotal;
         _StokTersedia = stokTotal;
@@ -88,7 +112,7 @@ public class Buku
             if (_StokTotal == 0)
                 return 0;
             
-            PersentaseTersedia = StokTersedia / StokTotal * 100;
+            return (double)_StokTersedia / _StokTotal * 100;
 
             //throw new NotImplementedException("Level 5 belum diimplementasikan");
         }

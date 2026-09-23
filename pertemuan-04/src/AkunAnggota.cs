@@ -14,8 +14,8 @@ public class AkunAnggota
     // TODO(Level 9): Nama hanya boleh diisi saat objek dibuat (ganti set ->
     //   init). Denda TIDAK boleh diubah dari luar kelas sama sekali (setter
     //   private) -- perubahannya hanya lewat TambahDenda()/BayarDenda().
-    public string Nama { get; set; } = "";
-    public int Denda { get; set; }
+    public string Nama { get; init; } = "";
+    public int Denda { get; private set; }
 
     // TODO(Level 10): JumlahPinjamanAktif hanya boleh diubah dari dalam kelas
     //   (setter private), dan pencatatannya lewat method internal (bukan public)
@@ -27,14 +27,19 @@ public class AkunAnggota
     {
         // TODO(Level 9): nomorAnggota null/kosong/spasi -> ArgumentException;
         //   selain itu isi NomorAnggota.
-        throw new NotImplementedException("Level 9 belum diimplementasikan");
+        if(string.IsNullOrWhiteSpace(nomorAnggota)) throw new ArgumentException("Nomor anggota tidak boleh null, kosong atau spasi");
+        NomorAnggota = nomorAnggota;
+        //throw new NotImplementedException("Level 9 belum diimplementasikan");
     }
 
     public void TambahDenda(int rupiah)
     {
         // TODO(Level 9): rupiah <= 0 -> ArgumentOutOfRangeException; selain itu
         //   tambahkan ke Denda.
-        throw new NotImplementedException("Level 9 belum diimplementasikan");
+        if(rupiah <= 0) throw new ArgumentOutOfRangeException("nilai harus lebih dari 0 ");
+
+        Denda += rupiah;
+        //throw new NotImplementedException("Level 9 belum diimplementasikan");
     }
 
     public int BayarDenda(int rupiah)
@@ -42,7 +47,12 @@ public class AkunAnggota
         // TODO(Level 9): rupiah <= 0 -> ArgumentOutOfRangeException; rupiah >
         //   Denda -> InvalidOperationException (denda tidak berubah); selain itu
         //   kurangi Denda dan KEMBALIKAN sisa denda.
-        throw new NotImplementedException("Level 9 belum diimplementasikan");
+        if(rupiah <= 0) throw new ArgumentOutOfRangeException("nilai harus lebih dari 0 ");
+        if(rupiah > Denda) throw new InvalidOperationException("jumlah pembayaran lebih dari denda");
+
+        Denda -= rupiah;
+        return Denda;
+        //throw new NotImplementedException("Level 9 belum diimplementasikan");
     }
 
     public void CatatPinjam()
